@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mumbai House Price Prediction Model</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            padding: 40px 32px 32px 32px;
+            max-width: 400px;
+            width: 100%;
+            margin: 32px 0;
+        }
+        h1 {
+            text-align: center;
+            color: #2980b9;
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 500;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 18px;
+            border: 1px solid #b2bec3;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f7fafd;
+            transition: border 0.2s;
+        }
+        input[type="number"]:focus, select:focus {
+            border: 1.5px solid #2980b9;
+            outline: none;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(90deg, #2574a9 0%, #48c6ef 100%);
+        }
+        .result {
+            margin-top: 24px;
+            padding: 18px;
+            background: #eaf6fb;
+            border-radius: 8px;
+            text-align: center;
+            color: #2980b9;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(41, 128, 185, 0.08);
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 18px 6px 18px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mumbai House Price Prediction</h1>
+        <form action="{{url_for('home')}}" method="post">
+            <label>BHK</label>
+            <input type="number" name="bhk" required="required" min="1" max="8" />
+
+            <label>Area (sq ft)</label>
+            <input type="number" name="area" required="required" min="127" max="7500" />
+
+            <label>Type</label>
+            <select name="type" required>
+                {% for t in type_list %}
+                    <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Status</label>
+            <select name="status" required>
+                {% for s in status_list %}
+                    <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Age</label>
+            <select name="age" required>
+                {% for a in age_list %}
+                    <option value="{{ a }}">{{ a }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Locality</label>
+            <select name="locality" required>
+                {% for l in locality_list %}
+                    <option value="{{ l }}">{{l}}</option>
+                {% endfor %}    
+            </select>
+
+            <label>Region</label>
+            <select name="region" required>
+                {% for r in region_list %}
+                    <option value="{{ r }}">{{r}}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Predict</button>
+        </form>
+        {% if prediction %}
+            <div class="result">Estimated Price: ₹{{ prediction }} Lakhs</div>
+        {% endif %}
+    </div>
+</body>
+</html>
