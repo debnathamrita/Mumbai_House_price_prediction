@@ -12,8 +12,7 @@ feature_names = joblib.load('feature_names.joblib')
 #Compress model file
 joblib.dump(model, 'model_filename.joblib', compress=3)
 
-# Create a DataFrame from user input
-user_data = pd.DataFrame(columns=feature_names)
+
 
 #Load the category lists
 status_list = joblib.load('status_list.joblib')
