@@ -44,8 +44,8 @@ python app.py
    - **Type**: Apartment, Villa, Studio Apartment, etc.
    - **Status**: Ready to move or Under Construction
    - **Age**: New, Resale, or Unknown
-   - **Locality**: Property location
-   - **Region**: Property region
+   - **Region**: Select the property region first
+   - **Locality**: Then select the property location based on the chosen region
 
 2. Click "Predict" to get the estimated price in Lakhs
 
@@ -80,10 +80,3 @@ The model includes sophisticated data preprocessing:
 - One-hot encoding for categorical variables
 - Duplicate removal
 
-## Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE). 

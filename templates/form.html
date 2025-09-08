@@ -1,135 +1,832 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Mumbai House Price Prediction Model</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mumbai House Price Prediction | AI-Powered Real Estate Valuation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%);
-            min-height: 100vh;
+        * {
             margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
         .container {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-            padding: 40px 32px 32px 32px;
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            padding: 48px 40px;
+            max-width: 1200px;
             width: 100%;
-            margin: 32px 0;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
         }
-        h1 {
-            text-align: center;
-            color: #2980b9;
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
             margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
         }
-        label {
+
+        .form-section h3 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section h3 i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            grid-column: 1 / -1;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 20px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-group label {
             display: block;
-            margin-bottom: 6px;
-            color: #333;
+            margin-bottom: 8px;
+            color: #2d3748;
             font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.025em;
         }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
         input[type="number"], select {
             width: 100%;
-            padding: 8px 10px;
-            margin-bottom: 18px;
-            border: 1px solid #b2bec3;
-            border-radius: 6px;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 1rem;
-            background: #f7fafd;
-            transition: border 0.2s;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            color: #2d3748;
         }
+
         input[type="number"]:focus, select:focus {
-            border: 1.5px solid #2980b9;
+            border-color: #667eea;
             outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
         }
-        button[type="submit"] {
+
+        input[type="number"]:hover, select:hover {
+            border-color: #cbd5e0;
+            background: #ffffff;
+        }
+
+        .submit-btn {
             width: 100%;
-            background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
-            color: #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 18px 24px;
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.2s;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        button[type="submit"]:hover {
-            background: linear-gradient(90deg, #2574a9 0%, #48c6ef 100%);
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
         .result {
-            margin-top: 24px;
-            padding: 18px;
-            background: #eaf6fb;
-            border-radius: 8px;
+            padding: 24px;
+            background: linear-gradient(135deg, #e6fffa 0%, #f0fff4 100%);
+            border-radius: 16px;
             text-align: center;
-            color: #2980b9;
-            font-size: 1.3rem;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(41, 128, 185, 0.08);
+            color: #2d3748;
+            font-size: 1.4rem;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #68d391;
+            animation: resultSlideIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        @media (max-width: 500px) {
+
+        .result::before {
+            content: '🏠';
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @keyframes resultSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .price-highlight {
+            color: #38a169;
+            font-size: 1.6rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-summary {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-summary h4 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-summary h4 i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .input-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-label {
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .input-value {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .no-prediction {
+            padding: 40px 24px;
+            text-align: center;
+            color: #718096;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .no-prediction i {
+            font-size: 3rem;
+            color: #a0aec0;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .no-prediction h3 {
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .no-prediction p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+
+        .model-info {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .model-info h3 {
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .model-info h3 i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .model-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dataset-link {
+            margin-top: 20px;
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .dataset-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .dataset-link a:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .dataset-link i {
+            font-size: 1rem;
+        }
+
+        .form-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-section h3 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section h3 i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
             .container {
-                padding: 18px 6px 18px 6px;
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                gap: 30px;
+            }
+            
+            .result-container {
+                position: static;
+            }
+
+            .model-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            input[type="number"], select {
+                padding: 14px 16px;
+            }
+
+            .model-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mumbai House Price Prediction</h1>
-        <form action="{{url_for('home')}}" method="post">
-            <label>BHK</label>
-            <input type="number" name="bhk" required="required" min="1" max="8" />
+        <div class="header">
+            <h1><i class="fas fa-home"></i> Mumbai House Price Prediction</h1>
+        </div>
 
-            <label>Area (sq ft)</label>
-            <input type="number" name="area" required="required" min="127" max="7500" />
+        <div class="form-container">
+            <form action="{{url_for('home')}}" method="post" id="predictionForm">
+                <div class="form-section">
+                    <h3><i class="fas fa-building"></i> Property Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="bhk"><i class="fas fa-bed"></i> BHK (Bedrooms, Hall, Kitchen)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="bhk" name="bhk" required="required" min="1" max="8" placeholder="Enter number of BHK" />
+                        </div>
+                    </div>
 
-            <label>Type</label>
-            <select name="type" required>
-                {% for t in type_list %}
-                    <option value="{{ t }}">{{ t }}</option>
-                {% endfor %}
-            </select>
+                    <div class="form-group">
+                        <label for="area"><i class="fas fa-ruler-combined"></i> Area (sq ft)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="area" name="area" required="required" min="127" max="7500" placeholder="Enter area in square feet" />
+                        </div>
+                    </div>
 
-            <label>Status</label>
-            <select name="status" required>
-                {% for s in status_list %}
-                    <option value="{{ s }}">{{ s }}</option>
-                {% endfor %}
-            </select>
+                    <div class="form-group">
+                        <label for="type"><i class="fas fa-home"></i> Property Type</label>
+                        <div class="input-wrapper">
+                            <select id="type" name="type" required>
+                                <option value="">Select property type</option>
+                                {% for t in type_list %}
+                                    <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-            <label>Age</label>
-            <select name="age" required>
-                {% for a in age_list %}
-                    <option value="{{ a }}">{{ a }}</option>
-                {% endfor %}
-            </select>
+                <div class="form-section">
+                    <h3><i class="fas fa-info-circle"></i> Property Status & Age</h3>
+                    
+                    <div class="form-group">
+                        <label for="status"><i class="fas fa-clipboard-check"></i> Status</label>
+                        <div class="input-wrapper">
+                            <select id="status" name="status" required>
+                                <option value="">Select property status</option>
+                                {% for s in status_list %}
+                                    <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
 
-            <label>Locality</label>
-            <select name="locality" required>
-                {% for l in locality_list %}
-                    <option value="{{ l }}">{{l}}</option>
-                {% endfor %}    
-            </select>
+                    <div class="form-group">
+                        <label for="age"><i class="fas fa-calendar-alt"></i> Age</label>
+                        <div class="input-wrapper">
+                            <select id="age" name="age" required>
+                                <option value="">Select property age</option>
+                                {% for a in age_list %}
+                                    <option value="{{ a }}">{{ a }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-            <label>Region</label>
-            <select name="region" required>
-                {% for r in region_list %}
-                    <option value="{{ r }}">{{r}}</option>
-                {% endfor %}
-            </select>
+                <div class="form-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Location Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="region"><i class="fas fa-globe-asia"></i> Region</label>
+                        <div class="input-wrapper">
+                            <select id="region" name="region" required>
+                                <option value="">Select region</option>
+                                {% for r in region_list %}
+                                    <option value="{{ r }}">{{ r }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
 
-            <button type="submit">Predict</button>
-        </form>
-        {% if prediction %}
-            <div class="result">Estimated Price: ₹{{ prediction }} Lakhs</div>
-        {% endif %}
+                    <div class="form-group">
+                        <label for="locality"><i class="fas fa-map-pin"></i> Locality</label>
+                        <div class="input-wrapper">
+                            <select id="locality" name="locality" required>
+                                <option value="">Select locality</option>
+                                {% for l in locality_list %}
+                                    <option value="{{ l }}">{{ l }}</option>
+                                {% endfor %}    
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-calculator"></i> Predict Price
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing property details...</p>
+                </div>
+            </form>
+        </div>
+
+        <div class="result-container">
+            {% if prediction %}
+                <div class="result">
+                    <div class="price-highlight">₹{{ prediction }} Lakhs</div>
+                    <p>Estimated Property Value</p>
+                    
+                    <div class="input-summary">
+                        <h4><i class="fas fa-info-circle"></i> Prediction Based On:</h4>
+                        <div class="input-grid">
+                            <div class="input-item">
+                                <span class="input-label">BHK:</span>
+                                <span class="input-value">{{ input_values.bhk }}</span>
+                            </div>
+                            <div class="input-item">
+                                <span class="input-label">Area:</span>
+                                <span class="input-value">{{ input_values.area }} sq ft</span>
+                            </div>
+                            <div class="input-item">
+                                <span class="input-label">Type:</span>
+                                <span class="input-value">{{ input_values.type }}</span>
+                            </div>
+                            <div class="input-item">
+                                <span class="input-label">Status:</span>
+                                <span class="input-value">{{ input_values.status }}</span>
+                            </div>
+                            <div class="input-item">
+                                <span class="input-label">Age:</span>
+                                <span class="input-value">{{ input_values.age }}</span>
+                            </div>
+                            <div class="input-item">
+                                <span class="input-label">Locality:</span>
+                                <span class="input-value">{{ input_values.locality }}</span>
+                            </div>
+                            <div class="input-item">
+                                <span class="input-label">Region:</span>
+                                <span class="input-value">{{ input_values.region }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-prediction">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Ready to Predict</h3>
+                    <p>Fill in the property details on the left and click "Predict Price" to get an instant AI-powered valuation.</p>
+                </div>
+            {% endif %}
+
+
+            <!-- Model Information -->
+            <div class="model-info">
+                <h3><i class="fas fa-brain"></i> Model Performance</h3>
+                <div class="model-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">86.6%</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">55K+</span>
+                        <span class="stat-label">Properties</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">200+</span>
+                        <span class="stat-label">Features</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">199</span>
+                        <span class="stat-label">Localities</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dataset Link -->
+            <div class="dataset-link">
+                <a href="https://www.kaggle.com/datasets/dravidvaishnav/mumbai-house-prices" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-database"></i>
+                    View Dataset on Kaggle
+                </a>
+            </div>
+        </div>
     </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function() {
+            document.getElementById('loading').style.display = 'block';
+            document.querySelector('.submit-btn').style.display = 'none';
+        });
+
+        // Add smooth focus effects
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add form validation feedback
+        inputs.forEach(input => {
+            input.addEventListener('invalid', function() {
+                this.style.borderColor = '#e53e3e';
+                this.style.boxShadow = '0 0 0 3px rgba(229, 62, 62, 0.1)';
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.checkValidity()) {
+                    this.style.borderColor = '#68d391';
+                    this.style.boxShadow = '0 0 0 3px rgba(104, 211, 145, 0.1)';
+                }
+            });
+        });
+
+        // Dynamic locality-region filtering
+        const localitySelect = document.getElementById('locality');
+        const regionSelect = document.getElementById('region');
+        const submitBtn = document.querySelector('.submit-btn');
+
+        // Store original region options
+        const originalLocalityOptions = Array.from(localitySelect.options);
+
+        // Update locality based on region
+        function updateLocalityOptions(selectedRegion, userTriggered= false) {
+            if (!selectedRegion) {
+                localitySelect.innerHTML = '';
+                originalLocalityOptions.slice(1).forEach(option => 
+                    localitySelect.appendChild(option.cloneNode(true)));
+                localitySelect.disabled = true; //disable locality untill region is chosen
+                return;
+            }
+
+            fetch(`/api/localities/${encodeURIComponent(selectedRegion)}`)
+                .then(response => response.json())
+                .then(data => {
+                        if (data.success) {
+                            localitySelect.innerHTML = '<option value="">Select locality</option>';
+
+                        // Add only valid localities for this region
+                            data.localities.forEach(locality => {
+                                const option = document.createElement('option');
+                                option.value = locality;
+                                option.textContent = locality;
+                                localitySelect.appendChild(option);
+                        });
+                        
+                        localitySelect.disabled = false;
+                        localitySelect.style.borderColor = '#68d391';
+                        localitySelect.style.boxShadow = '0 0 0 3px rgba(104, 211, 145, 0.1)';
+                        
+                        // Show success message
+                        if (userTriggered) {
+                            showValidationMessage(
+                                'Valid region selected. Choose from available localities.',
+                                'success', 
+                                regionSelect
+                            );
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching localities:', error);
+                    showValidationMessage(
+                        'Error loading localities. Please try again.', 
+                        'error');
+                });
+        }
+
+        // Validation message function
+        function showValidationMessage(message, type) {
+            // Remove existing validation message
+            const existingMessage = regionSelect.parentElement.parentElement.querySelector('.validation-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `validation-message ${type}`;
+            messageDiv.style.cssText = `
+                margin-top: 8px;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                ${type === 'success' ? 
+                    'background: #f0fff4; color: #38a169; border: 1px solid #68d391;' : 
+                    'background: #fed7d7; color: #e53e3e; border: 1px solid #fc8181;'
+                }
+            `;
+            messageDiv.textContent = message;
+
+            // Insert after selecting region
+            regionSelect.parentElement.parentElement.appendChild(messageDiv);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        showValidationMessage('Select region first', 'error');
+        
+        // When region changes, update localities
+        regionSelect.addEventListener('change', function() {
+            const selectedRegion = this.value;
+            updateLocalityOptions(selectedRegion, true);
+        });
+
+        // Initialize dropdown empty
+        updateLocalityOptions('');
+    </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import joblib
 from sklearn.ensemble import RandomForestRegressor
 
@@ -8,6 +8,9 @@ from sklearn.ensemble import RandomForestRegressor
 # Load model and feature names
 model = joblib.load('model_filename.joblib')
 feature_names = joblib.load('feature_names.joblib')
+
+#Compress model file
+joblib.dump(model, 'model_filename.joblib', compress=3)
 
 # Create a DataFrame from user input
 user_data = pd.DataFrame(columns=feature_names)
@@ -19,20 +22,49 @@ type_list = joblib.load('type_list.joblib')
 locality_list = joblib.load('locality_list.joblib')
 region_list = joblib.load('region_list.joblib')
 
+# Load region-locality mapping
+region_to_localities = joblib.load('region_to_localities.joblib')
+
 
 
 
 # Flask app
 app = Flask(__name__)
 
+@app.route('/api/localities/<region>')
+def get_localities_by_region(region):
+    """API endpoint to get localities for a given region"""
+    if region in region_to_localities:
+        return jsonify({
+            'success': True,
+            'localities': region_to_localities[region]
+        })
+    else:
+        return jsonify({
+            'success': False,
+            'message': 'Region not found'
+        }), 404
+
 @app.route('/', methods=["GET", "POST"])
 def home():
     prediction = None
+    input_values = None
     if request.method == "POST":
         # Input from user
         user_data = pd.DataFrame(columns=feature_names)
         # initialize all to zero
         user_data.loc[0] = 0  
+        
+        # Store input values for display
+        input_values = {
+            'bhk': request.form['bhk'],
+            'area': request.form['area'],
+            'type': request.form['type'],
+            'status': request.form['status'],
+            'age': request.form['age'],
+            'locality': request.form['locality'],
+            'region': request.form['region']
+        }
         
         user_data.loc[0, 'bhk'] = float(request.form['bhk'])
         user_data.loc[0, 'area'] = float(request.form['area'])
@@ -62,6 +94,7 @@ def home():
         prediction = round(price, 2)
     return render_template('form.html', 
                          prediction=prediction, 
+                         input_values=input_values,
                          locality_list=locality_list, 
                          region_list=region_list,
                          type_list=type_list,
